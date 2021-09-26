@@ -1,0 +1,625 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "VPC Create Stack File",
+   "Parameters": {
+      "InstanceType": {
+         "Description": "EC2 instance type Choice",
+         "Type": "String",
+         "Default": "t2.micro",
+         "AllowedValues": [
+            "t1.micro",
+            "t2.nano",
+            "t2.micro",
+            "t2.small",
+            "t2.medium",
+            "t2.large",
+            "m1.small",
+            "m1.medium",
+            "m1.large",
+            "m1.xlarge",
+            "m2.xlarge",
+            "m2.2xlarge",
+            "m2.4xlarge",
+            "m3.medium",
+            "m3.large",
+            "m3.xlarge",
+            "m3.2xlarge",
+            "m4.large",
+            "m4.xlarge",
+            "m4.2xlarge",
+            "m4.4xlarge",
+            "m4.10xlarge"
+         ]
+      },
+      "OperatorEMail": {
+         "Type": "String",
+         "AllowedPattern": "([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)",
+         "ConstraintDescription": "Admin email address."
+      },
+      "KeyName": {
+         "Type": "AWS::EC2::KeyPair::KeyName",
+         "ConstraintDescription": "EC2 Key Pair Choice"
+      },
+      "DBName": {
+         "Default": "MyRDS",
+         "Description": "The database name",
+         "Type": "String",
+         "MinLength": "1",
+         "MaxLength": "64",
+         "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*"
+      },
+      "DBUser": {
+         "NoEcho": "true",
+         "Description": "The database admin account username",
+         "Type": "String",
+         "MinLength": "1",
+         "MaxLength": "16",
+         "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*"
+      },
+      "DBPassword": {
+         "NoEcho": "true",
+         "Description": "The database admin account password",
+         "Type": "String",
+         "MinLength": "1",
+         "MaxLength": "41",
+         "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*"
+      },
+      "DBInstanceClass": {
+         "Description": "The database instance type",
+         "Type": "String",
+         "Default": "db.t2.micro",
+         "AllowedValues": [
+            "db.t1.micro",
+            "db.m1.small",
+            "db.m1.medium",
+            "db.m1.large",
+            "db.m1.xlarge",
+            "db.m2.xlarge",
+            "db.m2.2xlarge",
+            "db.m2.4xlarge",
+            "db.m3.medium",
+            "db.m3.large",
+            "db.m3.xlarge",
+            "db.m3.2xlarge",
+            "db.m4.large",
+            "db.m4.xlarge",
+            "db.m4.2xlarge",
+            "db.m4.4xlarge",
+            "db.m4.10xlarge",
+            "db.r3.large",
+            "db.r3.xlarge",
+            "db.r3.2xlarge",
+            "db.r3.4xlarge",
+            "db.r3.8xlarge",
+            "db.m2.xlarge",
+            "db.m2.2xlarge",
+            "db.m2.4xlarge",
+            "db.cr1.8xlarge",
+            "db.t2.micro",
+            "db.t2.small",
+            "db.t2.medium",
+            "db.t2.large"
+         ]
+      },
+      "DBAllocatedStorage": {
+         "Default": "20",
+         "Description": "The size of the database (Gb)",
+         "Type": "Number",
+         "MinValue": "20",
+         "MaxValue": "1000"
+      },
+      "MultiAZ": {
+         "Description": "Multi-AZ master database",
+         "Type": "String",
+         "Default": "false",
+         "AllowedValues": [
+            "true",
+            "false"
+         ]
+      }
+   },
+   "Resources": {
+      "MyVPC": {
+         "Type": "AWS::EC2::VPC",
+         "Properties": {
+            "EnableDnsSupport": true,
+            "EnableDnsHostnames": true,
+            "CidrBlock": "10.0.0.0/16",
+            "InstanceTenancy": "default",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA-VPC"
+               }
+            ]
+         }
+      },
+      "Subnet1": {
+         "Type": "AWS::EC2::Subnet",
+         "Properties": {
+            "AvailabilityZone": "ap-northeast-2a",
+            "CidrBlock": "10.0.1.0/24",
+            "MapPublicIpOnLaunch": true,
+            "VpcId": "MyVPC",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA-Public-Subnet-1"
+               }
+            ]
+         }
+      },
+      "Subnet2": {
+         "Type": "AWS::EC2::Subnet",
+         "Properties": {
+            "AvailabilityZone": "ap-northeast-2c",
+            "CidrBlock": "10.0.2.0/24",
+            "MapPublicIpOnLaunch": true,
+            "VpcId": "MyVPC",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA-Public-Subnet-2"
+               }
+            ]
+         }
+      },
+      "Subnet3": {
+         "Type": "AWS::EC2::Subnet",
+         "Properties": {
+            "AvailabilityZone": "ap-northeast-2a",
+            "CidrBlock": "10.0.3.0/24",
+            "VpcId": "MyVPC",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA-Private-Subnet-1"
+               }
+            ]
+         }
+      },
+      "Subnet4": {
+         "Type": "AWS::EC2::Subnet",
+         "Properties": {
+            "AvailabilityZone": "ap-northeast-2c",
+            "CidrBlock": "10.0.4.0/24",
+            "VpcId": "MyVPC",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA-Private-Subnet-2"
+               }
+            ]
+         }
+      },
+      "MyIGW": {
+         "Type": "AWS::EC2::InternetGateway",
+         "Properties": {
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA-IGW"
+               }
+            ]
+         }
+      },
+      "IGWToInternet": {
+         "Type": "AWS::EC2::VPCGatewayAttachment",
+         "Properties": {
+            "VpcId": "MyVPC",
+            "InternetGatewayId": "DACCA-IGW"
+         }
+      },
+      "NAT": {
+         "Type": "AWS::EC2::NatGateway",
+         "Properties": {
+            "AllocationId": {
+               "Fn::GetAtt": [
+                  "EIP",
+                  "AllocationId"
+               ]
+            },
+            "SubnetId": {
+               "Ref": "Subnet"
+            },
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "DACCA"
+               }
+            ]
+         }
+      },
+      "EIP": {
+         "DependsOn": "VPCGatewayAttach",
+         "Type": "AWS::EC2::EIP",
+         "Properties": {
+            "Domain": "MyVPC"
+         }
+      },
+      "MyRoutingTablePublic": {
+         "Type": "AWS::EC2::RouteTable",
+         "Properties": {
+            "VpcId": "MyVPC",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "Public Routing_Table"
+               }
+            ]
+         }
+      },
+      "MyRoutingTablePrivate": {
+         "Type": "AWS::EC2::RouteTable",
+         "Properties": {
+            "VpcId": "MyVPC",
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "Private Routing_Table"
+               }
+            ]
+         }
+      },
+      "MySubnetRoutingTablePublic1": {
+         "Type": "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties": {
+            "SubnetId": "Subnet1",
+            "RouteTableId": "MyRoutingTablePublic"
+         }
+      },
+      "MySubnetRoutingTablePublic2": {
+         "Type": "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties": {
+            "SubnetId": "Subnet2",
+            "RouteTableId": "MyRoutingTablePublic"
+         }
+      },
+      "MySubnetRoutingTablePrivate1": {
+         "Type": "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties": {
+            "SubnetId": "Subnet3",
+            "RouteTableId": "MyRoutingTablePrivate"
+         }
+      },
+      "MySubnetRoutingTablePrivate2": {
+         "Type": "AWS::EC2::SubnetRouteTableAssociation",
+         "Properties": {
+            "SubnetId": "Subnet4",
+            "RouteTableId": "MyRoutingTablePrivate"
+         }
+      },
+      "MyRoute": {
+         "Type": "AWS::EC2::Route",
+         "DependsOn": "IGWToInternet",
+         "Properties": {
+            "RouteTableId": "MyRoutingTablePublic",
+            "DestinationCidrBlock": "0.0.0.0/0",
+            "GatewayId": "MyIGW"
+         }
+      },
+
+      "MyPrivateRoute": {
+         "Type": "AWS::EC2::Route",
+         "DependsOn": "NAT",
+         "Properties": {
+            "RouteTableId": "MyRoutingTablePrivate",
+            "DestinationCidrBlock": "0.0.0.0/0",
+            "GatewayId": "NAT"
+         }
+      },
+
+      "LoadBalancerSG": {
+         "Type": "AWS::EC2::SecurityGroup",
+         "Properties": {
+            "GroupDescription": "LoadBalancer Allow HTTP HTTPS",
+            "GroupName": "MyLBSG",
+            "VpcId": "MyVPC",
+            "SecurityGroupIngress": [
+               {
+                  "IpProtocol": "tcp",
+                  "FromPort": 80,
+                  "ToPort": 80,
+                  "CidrIp": "0.0.0.0/0"
+               },
+               {
+                  "IpProtocol": "tcp",
+                  "FromPort": 443,
+                  "ToPort": 443,
+                  "CidrIp": "0.0.0.0/0"
+               }
+            ]
+         }
+      },
+      "InstanceSG": {
+         "Type": "AWS::EC2::SecurityGroup",
+         "Properties": {
+            "DependsOn" : "LoadBalancerSG",
+            "GroupDescription": "Instance Allow LB SSH",
+            "GroupName": "MyInstanceSG",
+            "VpcId": "MyVPC",
+            "SecurityGroupIngress": [
+               {
+                  "IpProtocol": "tcp",
+                  "FromPort": 22,
+                  "ToPort": 22,
+                  "CidrIp": "0.0.0.0/0"
+               },
+               {
+                  "IpProtocol": "tcp",
+                  "FromPort": 80,
+                  "ToPort": 80,
+                  "SourceSecurityGroupId": "LoadBalancerSG"
+               },
+               {
+                  "IpProtocol": "tcp",
+                  "FromPort": 443,
+                  "ToPort": 443,
+                  "SourceSecurityGroupId": "LoadBalancerSG"
+               }
+            ]
+         }
+      },
+      "MyLoadBalancer": {
+         "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+         "Properties": {
+            "IpAddressType": "ipv4",
+            "Name": "MyELB",
+            "Scheme": "internet-facing",
+            "SecurityGroups": [
+               "LoadBalancerSG"
+            ],
+            "Subnets": [
+               "Subnet1",
+               "Subnet2"
+            ],
+            "Type": "application"
+         }
+      },
+      "MyTargetGroup": {
+         "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+         "Properties": {
+            "HealthCheckEnabled": true,
+            "Name": "MyTG",
+            "TargetType": "instance",
+            "Port": 80,
+            "Protocol": "HTTP",
+            "VpcId": "MyVPC"
+         }
+      },
+      "ELBlistener": {
+         "Type": "AWS::ElasticLoadBalancingV2::Listener",
+         "Properties": {
+            "DefaultActions": [
+               {
+                  "Type": "forward",
+                  "ForwardConfig": {
+                     "TargetGroups": [
+                        {
+                           "TargetGroupArn": "MyTargetGroup",
+                           "Weight": 1
+                        }
+                     ]
+                  }
+               }
+            ],
+            "LoadBalancerArn": "MyLoadBalancer",
+            "Port": 80,
+            "Protocol": "HTTP"
+         }
+      },
+      "MyASGLaunchConfiguration": {
+         "Type": "AWS::AutoScaling::LaunchConfiguration",
+         "Properties": {
+            "LaunchConfigurationName": "MyAS",
+            "InstanceMonitoring": true,
+            "ImageId": "ami-006e2f9fa7597680a",
+            "InstanceType": "t2.mirco",
+            "KeyName": "testabkey.ppk",
+            "SecurityGroups": [
+               "InstanceSG"
+            ],
+            "UserData" :  {"Fn::Base64": {"Fn::Join": ["", [
+               "#!/bin/bash",
+               "sudo yum -y update",
+               "sudo yum -y install httpd*",
+               "sudo yum -y install git",
+               "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2",
+               "sudo systemctl start httpd",
+               "sudo systemctl enable httpd",
+               "sudo chown 755 /var/www",
+               "sudo git clone -b website_ver3 https://github.com/DACCACastle/html",
+               "sudo mv ./html /var/www",
+               "sudo chmod 0777 /var/www/html/",
+               "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php",
+               "sudo systemctl restart httpd"
+            ]]}},
+
+            "BlockDeviceMappings": [
+               {
+                  "DeviceName": "/dev/xvda",
+                  "Ebs": {
+                     "VolumeSize": 10,
+                     "VolumeType": "gp2",
+                     "DeleteOnTermination": true
+                  }
+               }
+            ]
+         }
+      },
+
+      "NotificationTopic": {
+         "Type": "AWS::SNS::Topic",
+         "Properties": {
+            "Subscription": [
+               {
+                  "Endpoint": null,
+                  "Protocol": "email"
+               }
+            ]
+         }
+      },
+      "MyAutoScalingGroup": {
+         "Type": "AWS::AutoScaling::AutoScalingGroup",
+         "Properties": {
+            "AutoScalingGroupName": "MyASG",
+            "VPCZoneIdentifier": [
+               "Subnet3",
+               "Subnet4"
+            ],
+            "LaunchConfigurationName": "MyASGLaunchConfiguration",
+            "MinSize": "2",
+            "MaxSize": "4",
+            "TargetGroupARNs": [
+               "MyTargetGroup"
+            ],
+            "NotificationConfiguration": {
+               "TopicARN": null,
+               "NotificationTypes": [
+                  "autoscaling:EC2_INSTANCE_LAUNCH",
+                  "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+                  "autoscaling:EC2_INSTANCE_TERMINATE",
+                  "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+               ]
+            },
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "PropagateAtLaunch": true,
+                  "Value": "MyASG-Instance"
+               }
+            ]
+         }
+      },
+      "ScaleUpPolicy": {
+         "Type": "AWS::AutoScaling::ScalingPolicy",
+         "Properties": {
+            "AdjustmentType": "ChangeInCapacity",
+            "AutoScalingGroupName": "MyAutoScalingGroup",
+            "Cooldown": "60",
+            "ScalingAdjustment": "1"
+         }
+      },
+      "ScaleDownPolicy": {
+         "Type": "AWS::AutoScaling::ScalingPolicy",
+         "Properties": {
+            "AdjustmentType": "ChangeInCapacity",
+            "AutoScalingGroupName": "MyAutoScalingGroup",
+            "Cooldown": "60",
+            "ScalingAdjustment": "-1"
+         }
+      },
+      "CPUAlarmHigh": {
+         "Type": "AWS::CloudWatch::Alarm",
+         "Properties": {
+            "AlarmDescription": "Scale-up if CPU >= 80% for 1 minutes",
+            "MetricName": "CPUUtilization",
+            "Namespace": "AWS/EC2",
+            "Statistic": "Average",
+            "Period": "300",
+            "EvaluationPeriods": "1",
+            "Threshold": "80",
+            "AlarmActions": [
+               null
+            ],
+            "Dimensions": [
+               {
+                  "Name": "AutoScalingGroupName",
+                  "Value": null
+               }
+            ],
+            "ComparisonOperator": "GreaterThanOrEqualToThreshold"
+         }
+      },
+      "CPUAlarmLow": {
+         "Type": "AWS::CloudWatch::Alarm",
+         "Properties": {
+            "AlarmDescription": "Scale-down if CPU < 50% for 1 minutes",
+            "MetricName": "CPUUtilization",
+            "Namespace": "AWS/EC2",
+            "Statistic": "Average",
+            "Period": "300",
+            "EvaluationPeriods": "1",
+            "Threshold": "50",
+            "AlarmActions": [
+               null
+            ],
+            "Dimensions": [
+               {
+                  "Name": "AutoScalingGroupName",
+                  "Value": null
+               }
+            ],
+            "ComparisonOperator": "LessThanThreshold"
+         }
+      },
+      "DBSG": {
+         "Type": "AWS::EC2::SecurityGroup",
+         "Properties": {
+            "GroupDescription": "RDS Allow MySQL",
+            "GroupName": "MyDBSG",
+            "VpcId": null,
+            "SecurityGroupIngress": [
+               {
+                  "IpProtocol": "tcp",
+                  "FromPort": 3306,
+                  "ToPort": 3306,
+                  "CidrIp": "10.0.0.0/16"
+               }
+            ]
+         }
+      },
+      "MyDBSubnetGroup": {
+         "Type": "AWS::RDS::DBSubnetGroup",
+         "Properties": {
+            "DBSubnetGroupDescription": "My RDS Subnet Group (Private Subnet)",
+            "SubnetIds": [
+               "Subnet3",
+               "Subnet4"
+            ]
+         }
+      },
+      "MyMasterDB": {
+         "Type": "AWS::RDS::DBInstance",
+         "Properties": {
+            "DBInstanceIdentifier": "MyRDS",
+            "DBName": null,
+            "DBInstanceClass": null,
+            "StorageType": "gp2",
+            "AllocatedStorage": null,
+            "Engine": "MariaDB",
+            "EngineVersion": "10.4.13",
+            "MasterUsername": null,
+            "MasterUserPassword": null,
+            "DBSubnetGroupName": null,
+            "VPCSecurityGroups": [
+               {
+                  "Ref": "DBSG"
+               }
+            ],
+            "PubliclyAccessible": false,
+            "DeleteAutomatedBackups": true,
+            "MultiAZ": null,
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "Master Database"
+               }
+            ]
+         }
+      },
+      "ReplicaDB": {
+         "Type": "AWS::RDS::DBInstance",
+         "Properties": {
+            "SourceDBInstanceIdentifier": null,
+            "DBInstanceClass": null,
+            "Tags": [
+               {
+                  "Key": "Name",
+                  "Value": "Read Replica Database"
+               }
+            ]
+         }
+      }
+   }
+}
