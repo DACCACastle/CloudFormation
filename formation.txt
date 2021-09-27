@@ -393,13 +393,13 @@
                         "IpProtocol": "tcp",
                         "FromPort": 80,
                         "ToPort": 80,
-                        "SourceSecurityGroupId": null
+                        "SourceSecurityGroupId": "LoadBalancerSG"
                     },
                     {
                         "IpProtocol": "tcp",
                         "FromPort": 443,
                         "ToPort": 443,
-                        "SourceSecurityGroupId": null
+                        "SourceSecurityGroupId": "LoadBalancerSG"
                     }
                 ]
             },
@@ -437,7 +437,7 @@
                 "Name": "MyELB2",
                 "Scheme": "internet-facing",
                 "SecurityGroups": [
-                    "LoadBalancerSG2"
+                    "LoadBalancerSG"
                 ],
                 "Subnets": [
                     "Subnet3",
@@ -459,37 +459,11 @@
                 "TargetType": "instance",
                 "Port": 80,
                 "Protocol": "HTTP",
-                "VpcId": null
+                "VpcId": "MyVPC"
             },
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
                     "id": "ea0097e8-8fe6-4126-b2f7-f673cc608be8"
-                }
-            }
-        },
-        "ELBlistener": {
-            "Type": "AWS::ElasticLoadBalancingV2::Listener",
-            "Properties": {
-                "DefaultActions": [
-                    {
-                        "Type": "forward",
-                        "ForwardConfig": {
-                            "TargetGroups": [
-                                {
-                                    "TargetGroupArn": null,
-                                    "Weight": 1
-                                }
-                            ]
-                        }
-                    }
-                ],
-                "LoadBalancerArn": null,
-                "Port": 80,
-                "Protocol": "HTTP"
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "c147ab77-2dfa-493e-ad01-213c38d14f01"
                 }
             }
         },
@@ -677,6 +651,134 @@
                 "AWS::CloudFormation::Designer": {
                     "id": "21d7d65d-e013-48e1-a149-140c4e23b198"
                 }
+            }
+        },
+        "PrivateASGLaunchConfiguration": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "LaunchConfigurationName": "PrivateAS",
+                "InstanceMonitoring": true,
+                "ImageId": null,
+                "InstanceType": "t2.micro",
+                "KeyName": "testabkey.ppk",
+                "SecurityGroups": [
+                    "InstanceSG"
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                null
+                            ]
+                        ]
+                    }
+                },
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "VolumeSize": 10,
+                            "VolumeType": "gp2",
+                            "DeleteOnTermination": true
+                        }
+                    }
+                ]
+            }
+        },
+        "PrivateAutoScalingGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "AutoScalingGroupName": "PrivateASG",
+                "VPCZoneIdentifier": [
+                    "Subnet3",
+                    "Subnet4"
+                ],
+                "LaunchConfigurationName": "PrivateASGLaunchConfiguration",
+                "MinSize": "2",
+                "MaxSize": "4",
+                "DesiredCapacity": "2",
+                "TargetGroupARNs": [
+                    "MyLoadBalancer2"
+                ],
+                "NotificationConfiguration": {
+                    "TopicARN": "NotificationTopic",
+                    "NotificationTypes": [
+                        "autoscaling:EC2_INSTANCE_LAUNCH",
+                        "autoscaling:EC2_INSTANCE_LAUNCH_ERROR",
+                        "autoscaling:EC2_INSTANCE_TERMINATE",
+                        "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "PropagateAtLaunch": true,
+                        "Value": "PrivateASG-Instance"
+                    }
+                ]
+            }
+        },
+        "PrivateScaleUpPolicy": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AdjustmentType": "ChangeInCapacity",
+                "AutoScalingGroupName": "PrivateAutoScalingGroup",
+                "Cooldown": "60",
+                "ScalingAdjustment": "1"
+            }
+        },
+        "PrivateScaleDownPolicy": {
+            "Type": "AWS::AutoScaling::ScalingPolicy",
+            "Properties": {
+                "AdjustmentType": "ChangeInCapacity",
+                "AutoScalingGroupName": "PrivateAutoScalingGroup",
+                "Cooldown": "60",
+                "ScalingAdjustment": "-1"
+            }
+        },        
+        "PrivateCPUAlarmHigh": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Scale-up if CPU >= 80% for 1 minutes",
+                "MetricName": "CPUUtilization",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "1",
+                "Threshold": "80",
+                "AlarmActions": [
+                    "PrivateScaleUpPolicy"
+                ],
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": "PrivateAutoScalingGroup"
+                    }
+                ],
+                "ComparisonOperator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        "PrivateCPUAlarmLow": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+                "AlarmDescription": "Scale-down if CPU < 50% for 1 minutes",
+                "MetricName": "CPUUtilization",
+                "Namespace": "AWS/EC2",
+                "Statistic": "Average",
+                "Period": "300",
+                "EvaluationPeriods": "1",
+                "Threshold": "50",
+                "AlarmActions": [
+                    "PrivateScaleDownPolicy"
+                ],
+                "Dimensions": [
+                    {
+                        "Name": "AutoScalingGroupName",
+                        "Value": "PrivateAutoScalingGroup"
+                    }
+                ],
+                "ComparisonOperator": "LessThanThreshold"
             }
         },
         "DBSG": {
