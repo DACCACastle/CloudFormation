@@ -599,7 +599,7 @@
                         "Ref": "Subnet2"
                     }
                 ],
-                "LaunchConfigurationName": "MyASGLaunchConfiguration",
+                "LaunchConfigurationName": { "Ref" : "MyASGLaunchConfiguration",
                 "MinSize": "2",
                 "MaxSize": "4",
                 "DesiredCapacity": "2",
@@ -627,7 +627,7 @@
             "DependsOn": "MyAutoScalingGroup",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
-                "AutoScalingGroupName": "MyAutoScalingGroup",
+                "AutoScalingGroupName": { "Ref" : "MyAutoScalingGroup"},
                 "Cooldown": "60",
                 "ScalingAdjustment": "1"
             },
@@ -642,7 +642,7 @@
             "DependsOn": "MyAutoScalingGroup",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
-                "AutoScalingGroupName": "MyAutoScalingGroup",
+                "AutoScalingGroupName":  { "Ref" : "MyAutoScalingGroup"},
                 "Cooldown": "60",
                 "ScalingAdjustment": "-1"
             },
@@ -778,7 +778,7 @@
                         "Ref": "Subnet4"
                     }
                 ],
-                "LaunchConfigurationName": "PrivateASGLaunchConfiguration",
+                "LaunchConfigurationName": {"Ref":"PrivateASGLaunchConfiguration"},
                 "MinSize": "2",
                 "MaxSize": "4",
                 "DesiredCapacity": "2",
@@ -806,7 +806,7 @@
             "DependsOn": "PrivateAutoScalingGroup",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
-                "AutoScalingGroupName": "PrivateAutoScalingGroup",
+                "AutoScalingGroupName": {"Ref":"PrivateAutoScalingGroup"},
                 "Cooldown": "60",
                 "ScalingAdjustment": "1"
             },
@@ -821,7 +821,7 @@
             "DependsOn": "PrivateAutoScalingGroup",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
-                "AutoScalingGroupName": "PrivateAutoScalingGroup",
+                "AutoScalingGroupName": {"Ref":"PrivateAutoScalingGroup"},
                 "Cooldown": "60",
                 "ScalingAdjustment": "-1"
             },
@@ -843,7 +843,7 @@
                 "EvaluationPeriods": "1",
                 "Threshold": "80",
                 "AlarmActions": [
-                    "PrivateScaleUpPolicy"
+                    {"Ref":"PrivateScaleUpPolicy"}
                 ],
                 "Dimensions": [
                     {
@@ -871,7 +871,7 @@
                 "EvaluationPeriods": "1",
                 "Threshold": "50",
                 "AlarmActions": [
-                    "PrivateScaleDownPolicy"
+                    {"Ref":"PrivateScaleDownPolicy"}
                 ],
                 "Dimensions": [
                     {
