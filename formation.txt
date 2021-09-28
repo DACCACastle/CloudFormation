@@ -497,6 +497,7 @@
 
         "ScaleUpPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
+            "DependsOn": "MyAutoScalingGroup",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": "MyAutoScalingGroup",
@@ -507,6 +508,7 @@
 
         "ScaleDownPolicy": {
             "Type": "AWS::AutoScaling::ScalingPolicy",
+            "DependsOn": "MyAutoScalingGroup",
             "Properties": {
                 "AdjustmentType": "ChangeInCapacity",
                 "AutoScalingGroupName": "MyAutoScalingGroup",
