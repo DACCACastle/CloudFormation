@@ -253,7 +253,7 @@
                 "VpcId": {
                     "Ref": "MyVPC"
                 },
-                "InternetGatewayId": "DACCA-IGW"
+                "InternetGatewayId": {"Ref":"MyIGW"}
             }
         },
 
@@ -261,7 +261,7 @@
             "DependsOn": "IGWToInternet",
             "Type": "AWS::EC2::EIP",
             "Properties": {
-               "Domain": "MyVPC"
+               "Domain": {"Ref":"MyVPC"}
             }
         },
 
@@ -362,7 +362,7 @@
             "Type": "AWS::EC2::Route",
             "DependsOn": "IGWToInternet",
             "Properties": {
-                "RouteTableId": "MyRoutingTablePublic",
+                "RouteTableId": { "Ref" : "MyRoutingTablePublic"},
                 "DestinationCidrBlock": "0.0.0.0/0",
                 "GatewayId": {
                     "Ref": "MyIGW"
@@ -378,7 +378,7 @@
             "Type": "AWS::EC2::Route",
             "DependsOn": "NAT",
             "Properties": {
-                "RouteTableId": "MyRoutingTablePrivate",
+                "RouteTableId": { "Ref" : "MyRoutingTablePrivate"},
                 "DestinationCidrBlock": "0.0.0.0/0",
                 "NatGatewayId" : { "Ref" : "NAT" }
             },
@@ -928,60 +928,6 @@
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
                     "id": "98650ef0-bc0f-4c46-ab0c-0cfcda74917b"
-                }
-            }
-        },
-        "MyMasterDB": {
-            "Type": "AWS::RDS::DBInstance",
-            "DependsOn": "MyDBSubnetGroup",
-            "Properties": {
-                "DBInstanceIdentifier": "MyRDS",
-                "DBName": "DBName",
-                "DBInstanceClass": "DBInstanceClass",
-                "StorageType": "gp2",
-                "AllocatedStorage": "DBAllocatedStorage",
-                "Engine": "MariaDB",
-                "EngineVersion": "10.4.13",
-                "MasterUsername": "DBUser",
-                "MasterUserPassword": "DBPassword",
-                "DBSubnetGroupName": "Sunbet3",
-                "VPCSecurityGroups": [
-                    {
-                        "Ref": "DBSG"
-                    }
-                ],
-                "PubliclyAccessible": false,
-                "DeleteAutomatedBackups": true,
-                "MultiAZ": "MultiAZ",
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "Master Database"
-                    }
-                ]
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "6a41fa53-a040-4c97-bcfa-17a8aae07743"
-                }
-            }
-        },
-        "ReplicaDB": {
-            "Type": "AWS::RDS::DBInstance",
-            "DependsOn": "MyMasterDB",
-            "Properties": {
-                "SourceDBInstanceIdentifier": "MyMasterDB",
-                "DBInstanceClass": "DBInstanceClass",
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "Read Replica Database"
-                    }
-                ]
-            },
-            "Metadata": {
-                "AWS::CloudFormation::Designer": {
-                    "id": "c812aaec-7e97-4d16-bdea-e1decc87668d"
                 }
             }
         }
