@@ -229,6 +229,36 @@
                 }
             }
         },
+        "Subnet5": {
+            "Type": "AWS::EC2::Subnet",
+            "DependsOn" : "MyVPC",
+            "Properties": {
+                "AvailabilityZone": "ap-northeast-2a",
+                "CidrBlock": "10.0.5.0/24",
+                "VpcId": { "Ref" : "MyVPC"},
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "DACCA-Private-Subnet-3"
+                    }
+                ]
+            }
+        },
+        "Subnet6": {
+            "Type": "AWS::EC2::Subnet",
+            "DependsOn" : "MyVPC",
+            "Properties": {
+                "AvailabilityZone": "ap-northeast-2c",
+                "CidrBlock": "10.0.6.0/24",
+                "VpcId": { "Ref" : "MyVPC"},
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "DACCA-Private-Subnet-4"
+                    }
+                ]
+            }
+        },
         "MyIGW": {
             "Type": "AWS::EC2::InternetGateway",
             "DependsOn": "Subnet4",
@@ -467,10 +497,10 @@
                 ],
                 "Subnets": [
                     {
-                        "Ref": "Subnet1"
+                        "Ref": "Subnet3"
                     },
                     {
-                        "Ref": "Subnet2"
+                        "Ref": "Subnet4"
                     }
                 ],
                 "Type": "application"
@@ -495,10 +525,10 @@
                 ],
                 "Subnets": [
                     {
-                        "Ref": "Subnet3"
+                        "Ref": "Subnet5"
                     },
                     {
-                        "Ref": "Subnet4"
+                        "Ref": "Subnet6"
                     }
                 ],
                 "Type": "application"
