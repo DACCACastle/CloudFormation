@@ -233,9 +233,6 @@
             "Type": "AWS::EC2::InternetGateway",
             "DependsOn": "Subnet4",
             "Properties": {
-                    "VpcId": {
-                        "Ref": "MyVPC"
-                    },
                 "Tags": [
                 {
                         "Key": "Name",
@@ -259,10 +256,20 @@
                 "InternetGatewayId": "DACCA-IGW"
             }
         },
+
+        "EIP": {
+            "DependsOn": "IGWToInternet",
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+               "Domain": "MyVPC"
+            }
+        },
+
         "NAT": {
             "Type": "AWS::EC2::NatGateway",
-            "DependsOn": "Subnet4",
+            "DependsOn": "Subnet3",
             "Properties": {
+                "AllocationId" : { "Ref" : "EIP" },
                 "SubnetId": {
                     "Ref": "Subnet3"
                 },
@@ -323,32 +330,32 @@
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "DependsOn": "MyRoutingTablePublic",
             "Properties": {
-                "SubnetId": "DACCA-Public-Subnet-1",
-                "RouteTableId": "Public Routing_Table"
+                "SubnetId": { "Ref" : "Subnet1" },
+                "RouteTableId": { "Ref" : "MyRoutingTablePublic" }
             }
         },
         "MySubnetRoutingTablePublic2": {
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "DependsOn": "MyRoutingTablePublic",
             "Properties": {
-                "SubnetId": "DACCA-Public-Subnet-2",
-                "RouteTableId": "Public Routing_Table"
+                "SubnetId": { "Ref" : "Subnet2" },
+                "RouteTableId": { "Ref" : "MyRoutingTablePublic" }
             }
         },
         "MySubnetRoutingTablePrivate1": {
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "DependsOn": "MyRoutingTablePrivate",
             "Properties": {
-                "SubnetId": "DACCA-Private-Subnet-1",
-                "RouteTableId": "Private Routing_Table"
+                "SubnetId": { "Ref" : "Subnet3" },
+                "RouteTableId": { "Ref" : "MyRoutingTablePrivate" }
             }
         },
         "MySubnetRoutingTablePrivate2": {
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "DependsOn": "MyRoutingTablePrivate",
             "Properties": {
-                "SubnetId": "DACCA-Private-Subnet-2",
-                "RouteTableId": "Private Routing_Table"
+                "SubnetId": { "Ref" : "Subnet4" },
+                "RouteTableId": { "Ref" : "MyRoutingTablePrivate" }
             }
         },
         "MyRoute": {
@@ -373,9 +380,7 @@
             "Properties": {
                 "RouteTableId": "MyRoutingTablePrivate",
                 "DestinationCidrBlock": "0.0.0.0/0",
-                "GatewayId": {
-                    "Ref": "NAT"
-                }
+                "NatGatewayId" : { "Ref" : "NAT" }
             },
             "Metadata": {
                 "AWS::CloudFormation::Designer": {
@@ -455,7 +460,7 @@
         },
         "MyLoadBalancer": {
             "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-            "DependsOn": "LoadBalancerSG",
+            "DependsOn": "MyIGW",
             "Properties": {
                 "IpAddressType": "ipv4",
                 "Name": "MyELB",
@@ -483,7 +488,7 @@
         },
         "MyLoadBalancer2": {
             "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-            "DependsOn": "LoadBalancerSG",
+            "DependsOn": "MyIGW",
             "Properties": {
                 "IpAddressType": "ipv4",
                 "Name": "MyELB2",
