@@ -269,7 +269,7 @@
             "Type": "AWS::EC2::NatGateway",
             "DependsOn": "Subnet3",
             "Properties": {
-                "AllocationId" : { "Ref" : "EIP" },
+                "AllocationId" : { "Fn::GetAtt" : ["EIP", "AllocationId"]},
                 "SubnetId": {
                     "Ref": "Subnet3"
                 },
@@ -720,7 +720,7 @@
                 "InstanceMonitoring": true,
                 "ImageId": "ami-006e2f9fa7597680a",
                 "InstanceType": "t2.micro",
-                "KeyName": "testabkey.ppk",
+                "KeyName": "test.abKey",
                 "SecurityGroups": [
                     {
                         "Ref": "InstanceSG"
