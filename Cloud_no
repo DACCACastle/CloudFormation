@@ -649,7 +649,7 @@
                     "MinSize": "2",
                     "MaxSize": "4",
                     "DesiredCapacity": "2",
-                    "TargetGroupARNs": [ { "Ref": "MyLoadBalancer" } ],
+                    "TargetGroupARNs": [ { "Ref": "MyTargetGroup" } ],
                     "Tags": [
                         {
                             "Key": "Name",
@@ -696,9 +696,7 @@
             },
             "CPUAlarmHigh": {
                 "Type": "AWS::CloudWatch::Alarm",
-                "DependsOn": [
-                    "ScaleUpPolicy"
-                ],
+                "DependsOn": "ScaleUpPolicy",
                 "Properties": {
                     "AlarmDescription": "Scale-up if CPU >= 80% for 1 minutes",
                     "MetricName": "CPUUtilization",
@@ -707,9 +705,7 @@
                     "Period": "300",
                     "EvaluationPeriods": "1",
                     "Threshold": "80",
-                    "AlarmActions": [
-                        "ScaleUpPolicy"
-                    ],
+                    "AlarmActions": [ {"Ref":"ScaleUpPolicy"} ],
                     "Dimensions": [
                         {
                             "Name": "AutoScalingGroupName",
@@ -726,9 +722,7 @@
             },
             "CPUAlarmLow": {
                 "Type": "AWS::CloudWatch::Alarm",
-                "DependsOn": [
-                    "ScaleDownPolicy"
-                ],
+                "DependsOn":"ScaleDownPolicy",
                 "Properties": {
                     "AlarmDescription": "Scale-down if CPU < 50% for 1 minutes",
                     "MetricName": "CPUUtilization",
@@ -737,9 +731,7 @@
                     "Period": "300",
                     "EvaluationPeriods": "1",
                     "Threshold": "50",
-                    "AlarmActions": [
-                        "ScaleDownPolicy"
-                    ],
+                    "AlarmActions": [ {"Ref":"ScaleDownPolicy"} ],
                     "Dimensions": [
                         {
                             "Name": "AutoScalingGroupName",
@@ -824,7 +816,7 @@
                     "MinSize": "2",
                     "MaxSize": "4",
                     "DesiredCapacity": "2",
-                    "TargetGroupARNs": [{ "Ref" : "PrivateMyLoadBalancer" }],
+                    "TargetGroupARNs": [{ "Ref" : "MyTargetGroup2" }],
                     "Tags": [
                         {
                             "Key": "Name",
