@@ -550,7 +550,7 @@
                 "Properties": {
                     "HealthCheckEnabled": true,
                     "Name": "MyTG",
-                    "TargetType": "alb",
+                    "TargetType": "Instance",
                     "Port": 80,
                     "Protocol": "HTTP",
                     "VpcId": {
@@ -565,7 +565,7 @@
                 "Properties": {
                     "HealthCheckEnabled": true,
                     "Name": "MyTG2",
-                    "TargetType": "alb",
+                    "TargetType": "Instance",
                     "Port": 80,
                     "Protocol": "HTTP",
                     "VpcId": {
