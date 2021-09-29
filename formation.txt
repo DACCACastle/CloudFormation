@@ -229,9 +229,43 @@
                 }
             }
         },
+        "Subnet5": {
+            "Type": "AWS::EC2::Subnet",
+            "DependsOn": "MyVPC",
+            "Properties": {
+                "AvailabilityZone": "ap-northeast-2a",
+                "CidrBlock": "10.0.5.0/24",
+                "VpcId": {
+                    "Ref": "MyVPC"
+                },  
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "DACCA-Private-Subnet-1"
+                    }
+                ]
+            }
+        },
+        "Subnet6": {
+            "Type": "AWS::EC2::Subnet",
+            "DependsOn": "MyVPC",
+            "Properties": {
+                "AvailabilityZone": "ap-northeast-2c",
+                "CidrBlock": "10.0.6.0/24",
+                "VpcId": {
+                    "Ref": "MyVPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "DACCA-Private-Subnet-2"
+                    }
+                ]
+            }
+        },
         "MyIGW": {
             "Type": "AWS::EC2::InternetGateway",
-            "DependsOn": "Subnet4",
+            "DependsOn": "Subnet6",
             "Properties": {
                 "Tags": [
                 {
@@ -267,11 +301,11 @@
 
         "NAT": {
             "Type": "AWS::EC2::NatGateway",
-            "DependsOn": "Subnet3",
+            "DependsOn": "Subnet5",
             "Properties": {
                 "AllocationId" : { "Fn::GetAtt" : ["EIP", "AllocationId"]},
                 "SubnetId": {
-                    "Ref": "Subnet3"
+                    "Ref": "Subnet5"
                 },
                 "Tags": [
                     {
@@ -288,7 +322,7 @@
         },
         "MyRoutingTablePublic": {
             "Type": "AWS::EC2::RouteTable",
-            "DependsOn": "Subnet4",
+            "DependsOn": "Subnet6",
             "Properties": {
                 "VpcId": {
                     "Ref": "MyVPC"
@@ -308,7 +342,7 @@
         },
         "MyRoutingTablePrivate": {
             "Type": "AWS::EC2::RouteTable",
-            "DependsOn": "Subnet4",
+            "DependsOn": "Subnet6",
             "Properties": {
                 "VpcId": {
                     "Ref": "MyVPC"
@@ -355,6 +389,22 @@
             "DependsOn": "MyRoutingTablePrivate",
             "Properties": {
                 "SubnetId": { "Ref" : "Subnet4" },
+                "RouteTableId": { "Ref" : "MyRoutingTablePrivate" }
+            }
+        },
+        "MySubnetRoutingTablePrivate3": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "DependsOn": "MyRoutingTablePrivate",
+            "Properties": {
+                "SubnetId": { "Ref" : "Subnet5" },
+                "RouteTableId": { "Ref" : "MyRoutingTablePrivate" }
+            }
+        },
+        "MySubnetRoutingTablePrivate4": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "DependsOn": "MyRoutingTablePrivate",
+            "Properties": {
+                "SubnetId": { "Ref" : "Subnet6" },
                 "RouteTableId": { "Ref" : "MyRoutingTablePrivate" }
             }
         },
@@ -472,10 +522,10 @@
                 ],
                 "Subnets": [
                     {
-                        "Ref": "Subnet1"
+                        "Ref": "Subnet3"
                     },
                     {
-                        "Ref": "Subnet2"
+                        "Ref": "Subnet4"
                     }
                 ],
                 "Type": "application"
@@ -515,10 +565,10 @@
                 ],
                 "Subnets": [
                     {
-                        "Ref": "Subnet3"
+                        "Ref": "Subnet5"
                     },
                     {
-                        "Ref": "Subnet4"
+                        "Ref": "Subnet6"
                     }
                 ],
                 "Type": "application"
@@ -598,19 +648,19 @@
                         "Fn::Join": [
                             "",
                             [
-                                "#!/bin/bash",
-                                "sudo yum -y update",
-                                "sudo yum -y install httpd*",
-                                "sudo yum -y install git",
-                                "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2",
-                                "sudo systemctl start httpd",
-                                "sudo systemctl enable httpd",
-                                "sudo chown 755 /var/www",
-                                "sudo git clone -b web_final https://github.com/DACCACastle/html",
-                                "sudo mv ./html /var/www",
-                                "sudo chmod 0777 /var/www/html/",
-                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php",
-                                "sudo systemctl restart httpd"
+                                "#!/bin/bash\n",
+                                "sudo yum -y update\n",
+                                "sudo yum -y install httpd*\n",
+                                "sudo yum -y install git\n",
+                                "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2\n",
+                                "sudo systemctl start httpd\n",
+                                "sudo systemctl enable httpd\n",
+                                "sudo chown 755 /var/www\n",
+                                "sudo git clone -b web_final https://github.com/DACCACastle/html\n",
+                                "sudo mv ./html /var/www\n",
+                                "sudo chmod 0777 /var/www/html/\n",
+                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                "sudo systemctl restart httpd\n"
                             ]
                         ]
                     }
@@ -639,10 +689,10 @@
                 "AutoScalingGroupName": "MyASG",
                 "VPCZoneIdentifier": [
                     {
-                        "Ref": "Subnet1"
+                        "Ref": "Subnet3"
                     },
                     {
-                        "Ref": "Subnet2"
+                        "Ref": "Subnet4"
                     }
                 ],
                 "LaunchConfigurationName": { "Ref" : "MyASGLaunchConfiguration"},
@@ -765,19 +815,19 @@
                         "Fn::Join": [
                             "",
                             [
-                                "#!/bin/bash",
-                                "sudo yum -y update",
-                                "sudo yum -y install httpd*",
-                                "sudo yum -y install git",
-                                "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2",
-                                "sudo systemctl start httpd",
-                                "sudo systemctl enable httpd",
-                                "sudo chown 755 /var/www",
-                                "sudo git clone -b Web_Video https://github.com/DACCACastle/html",
-                                "sudo mv ./html /var/www",
-                                "sudo chmod 0777 /var/www/html/",
-                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php",
-                                "sudo systemctl restart httpd"
+                                "#!/bin/bash\n",
+                                "sudo yum -y update\n",
+                                "sudo yum -y install httpd*\n",
+                                "sudo yum -y install git\n",
+                                "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2\n",
+                                "sudo systemctl start httpd\n",
+                                "sudo systemctl enable httpd\n",
+                                "sudo chown 755 /var/www\n",
+                                "sudo git clone -b Web_Video https://github.com/DACCACastle/html\n",
+                                "sudo mv ./html /var/www\n",
+                                "sudo chmod 0777 /var/www/html/\n",
+                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                "sudo systemctl restart httpd\n"
                             ]
                         ]
                     }
@@ -806,10 +856,10 @@
                 "AutoScalingGroupName": "PrivateASG",
                 "VPCZoneIdentifier": [
                     {
-                        "Ref": "Subnet3"
+                        "Ref": "Subnet5"
                     },
                     {
-                        "Ref": "Subnet4"
+                        "Ref": "Subnet6"
                     }
                 ],
                 "LaunchConfigurationName": {"Ref":"PrivateASGLaunchConfiguration"},
@@ -943,10 +993,10 @@
                 "DBSubnetGroupDescription": "My RDS Subnet Group (Private Subnet)",
                 "SubnetIds": [
                     {
-                        "Ref": "Subnet3"
+                        "Ref": "Subnet5"
                     },
                     {
-                        "Ref": "Subnet4"
+                        "Ref": "Subnet6"
                     }
                 ]
             }
@@ -956,7 +1006,7 @@
             "DependsOn": "MyDBSubnetGroup",
             "Properties": {
                 "DBInstanceIdentifier": "MyRDS",
-                "DBName": "DBName",
+                "DBName": {"Ref":"DBName"},
                 "DBInstanceClass": {"Ref":"DBInstanceClass"},
                 "StorageType": "gp2",
                 "AllocatedStorage": {"Ref" : "DBAllocatedStorage"},
@@ -985,8 +1035,8 @@
             "Type": "AWS::RDS::DBInstance",
             "DependsOn": "MyMasterDB",
             "Properties": {
-                "SourceDBInstanceIdentifier": "MyMasterDB",
-                "DBInstanceClass": "DBInstanceClass",
+                "SourceDBInstanceIdentifier": {"Ref":"MyMasterDB"},
+                "DBInstanceClass": {"Ref":"DBInstanceClass"},
                 "Tags": [
                     {
                         "Key": "Name",
