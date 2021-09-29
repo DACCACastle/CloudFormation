@@ -598,19 +598,19 @@
                             "Fn::Join": [
                                 "",
                                 [
-                                    "#!/bin/bash",
-                                    "sudo yum -y update",
-                                    "sudo yum -y install httpd*",
-                                    "sudo yum -y install git",
-                                    "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2",
-                                    "sudo systemctl start httpd",
-                                    "sudo systemctl enable httpd",
-                                    "sudo chown 755 /var/www",
-                                    "sudo git clone -b web_final https://github.com/DACCACastle/html",
-                                    "sudo mv ./html /var/www",
-                                    "sudo chmod 0777 /var/www/html/",
-                                    "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php",
-                                    "sudo systemctl restart httpd"
+                                    "#!/bin/bash\n",
+                                    "sudo yum -y update\n",
+                                    "sudo yum -y install httpd*\n",
+                                    "sudo yum -y install git\n",
+                                    "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2\n",
+                                    "sudo systemctl start httpd\n",
+                                    "sudo systemctl enable httpd\n",
+                                    "sudo chown 755 /var/www\n",
+                                    "sudo git clone -b web_final https://github.com/DACCACastle/html\n",
+                                    "sudo mv ./html /var/www\n",
+                                    "sudo chmod 0777 /var/www/html/\n",
+                                    "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                    "sudo systemctl restart httpd\n"
                                 ]
                             ]
                         }
@@ -765,19 +765,19 @@
                             "Fn::Join": [
                                 "",
                                 [
-                                    "#!/bin/bash",
-                                    "sudo yum -y update",
-                                    "sudo yum -y install httpd*",
-                                    "sudo yum -y install git",
-                                    "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2",
-                                    "sudo systemctl start httpd",
-                                    "sudo systemctl enable httpd",
-                                    "sudo chown 755 /var/www",
-                                    "sudo git clone -b Web_Video https://github.com/DACCACastle/html",
-                                    "sudo mv ./html /var/www",
-                                    "sudo chmod 0777 /var/www/html/",
-                                    "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php",
-                                    "sudo systemctl restart httpd"
+                                    "#!/bin/bash\n",
+                                    "sudo yum -y update\n",
+                                    "sudo yum -y install httpd*\n",
+                                    "sudo yum -y install git\n",
+                                    "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2\n",
+                                    "sudo systemctl start httpd\n",
+                                    "sudo systemctl enable httpd\n",
+                                    "sudo chown 755 /var/www\n",
+                                    "sudo git clone -b Web_Video https://github.com/DACCACastle/html\n",
+                                    "sudo mv ./html /var/www\n",
+                                    "sudo chmod 0777 /var/www/html/\n",
+                                    "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                    "sudo systemctl restart httpd\n"
                                 ]
                             ]
                         }
