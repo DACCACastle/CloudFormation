@@ -522,10 +522,10 @@
                 ],
                 "Subnets": [
                     {
-                        "Ref": "Subnet3"
+                        "Ref": "Subnet1"
                     },
                     {
-                        "Ref": "Subnet4"
+                        "Ref": "Subnet2"
                     }
                 ],
                 "Type": "application"
@@ -565,10 +565,10 @@
                 ],
                 "Subnets": [
                     {
-                        "Ref": "Subnet5"
+                        "Ref": "Subnet1"
                     },
                     {
-                        "Ref": "Subnet6"
+                        "Ref": "Subnet2"
                     }
                 ],
                 "Type": "application"
