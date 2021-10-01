@@ -241,7 +241,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-1"
+                        "Value": "DACCA-Private-Subnet-3"
                     }
                 ]
             }
@@ -258,7 +258,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-2"
+                        "Value": "DACCA-Private-Subnet-4"
                     }
                 ]
             }
@@ -305,7 +305,7 @@
             "Properties": {
                 "AllocationId" : { "Fn::GetAtt" : ["EIP", "AllocationId"]},
                 "SubnetId": {
-                    "Ref": "Subnet5"
+                    "Ref": "Subnet1"
                 },
                 "Tags": [
                     {
