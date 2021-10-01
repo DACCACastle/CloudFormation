@@ -152,7 +152,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Public-Subnet-1"
+                        "Value": "DACCA-Private-Subnet-1"
                     }
                 ]
             },
@@ -175,7 +175,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Public-Subnet-2"
+                        "Value": "DACCA-Private-Subnet-2"
                     }
                 ]
             },
@@ -197,7 +197,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-1"
+                        "Value": "DACCA-Private-Subnet-3"
                     }
                 ]
             },
@@ -219,7 +219,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-2"
+                        "Value": "DACCA-Private-Subnet-4"
                     }
                 ]
             },
@@ -241,7 +241,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-1"
+                        "Value": "DACCA-Private-Subnet-5"
                     }
                 ]
             }
@@ -258,7 +258,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-2"
+                        "Value": "DACCA-Private-Subnet-6"
                     }
                 ]
             }
