@@ -1005,7 +1005,7 @@
         },
         "MyMasterDB": {
             "Type": "AWS::RDS::DBInstance",
-            "DependsOn": "MyDBSubnetGroup",
+            "DependsOn": "NAT",
             "Properties": {
                 "DBInstanceIdentifier": "MyRDS",
                 "DBName": {"Ref":"DBName"},
