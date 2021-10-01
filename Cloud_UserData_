@@ -828,7 +828,9 @@
                                 "sudo git clone -b Web_Video https://github.com/DACCACastle/html\n",
                                 "sudo mv ./html /var/www\n",
                                 "sudo chmod 0777 /var/www/html/\n",
-                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                "sudo sed -i 's/dbaddress/",
+                                {"Fn::GetAtt": ["MyMasterDB","Endpoint.Address"]},
+                                "/g' /var/www/html/php/db_con.php\n",
                                 "sudo systemctl restart httpd\n"
                             ]
                         ]
