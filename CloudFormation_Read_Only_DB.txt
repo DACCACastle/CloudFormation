@@ -152,7 +152,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-1"
+                        "Value": "DACCA-Public-Subnet-1"
                     }
                 ]
             },
@@ -175,7 +175,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-2"
+                        "Value": "DACCA-Public-Subnet-2"
                     }
                 ]
             },
@@ -197,7 +197,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-3"
+                        "Value": "DACCA-Private-Subnet-1"
                     }
                 ]
             },
@@ -219,7 +219,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-4"
+                        "Value": "DACCA-Private-Subnet-2"
                     }
                 ]
             },
@@ -241,7 +241,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-5"
+                        "Value": "DACCA-Private-Subnet-3"
                     }
                 ]
             }
@@ -258,7 +258,7 @@
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "DACCA-Private-Subnet-6"
+                        "Value": "DACCA-Private-Subnet-4"
                     }
                 ]
             }
@@ -305,7 +305,7 @@
             "Properties": {
                 "AllocationId" : { "Fn::GetAtt" : ["EIP", "AllocationId"]},
                 "SubnetId": {
-                    "Ref": "Subnet5"
+                    "Ref": "Subnet1"
                 },
                 "Tags": [
                     {
@@ -631,7 +631,7 @@
         
         "MyASGLaunchConfiguration": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
-            "DependsOn": "LoadBalancerSG",
+            "DependsOn": "MyMasterDB",
             "Properties": {
                 "LaunchConfigurationName": "MyAS",
                 "InstanceMonitoring": true,
@@ -659,7 +659,9 @@
                                 "sudo git clone -b web_final https://github.com/DACCACastle/html\n",
                                 "sudo mv ./html /var/www\n",
                                 "sudo chmod 0777 /var/www/html/\n",
-                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                "sudo sed -i 's/dbaddress/",
+                                {"Fn::GetAtt": ["MyMasterDB","Endpoint.Address"]},
+                                "/g' /var/www/html/php/db_con.php\n",
                                 "sudo systemctl restart httpd\n"
                             ]
                         ]
@@ -826,7 +828,9 @@
                                 "sudo git clone -b Web_Video https://github.com/DACCACastle/html\n",
                                 "sudo mv ./html /var/www\n",
                                 "sudo chmod 0777 /var/www/html/\n",
-                                "sudo sed -i 's/dbaddress/dacca.cjak8ircfsxu.ap-northeast-2.rds.amazonaws.com/g' /var/www/html/php/db_con.php\n",
+                                "sudo sed -i 's/dbaddress/",
+                                {"Fn::GetAtt": ["MyMasterDB","Endpoint.Address"]},
+                                "/g' /var/www/html/php/db_con.php\n",
                                 "sudo systemctl restart httpd\n"
                             ]
                         ]
@@ -1003,7 +1007,7 @@
         },
         "MyMasterDB": {
             "Type": "AWS::RDS::DBInstance",
-            "DependsOn": "MyDBSubnetGroup",
+            "DependsOn": "NAT",
             "Properties": {
                 "DBInstanceIdentifier": "MyRDS",
                 "DBName": {"Ref":"DBName"},
