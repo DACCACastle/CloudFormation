@@ -14,3 +14,7 @@
 
 ## CloudFormation 스택 확인
 ![image](https://user-images.githubusercontent.com/77655831/136135678-fc33e765-6161-4e96-9c0f-cd235e8b275c.png)
+
+### EC2 부하도 주기
+$ sudo amazon-linux-extras install epel -y
+$ sudo yum install stress -y
